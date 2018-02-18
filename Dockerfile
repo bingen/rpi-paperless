@@ -1,19 +1,25 @@
 FROM resin/raspberrypi3-debian:latest
 
+ENV VERSION=1.1.0
 # Install dependencies
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         sudo \
         tesseract-ocr tesseract-ocr-eng imagemagick ghostscript unpaper \
-        git python3-pip libpython3-dev gcc libmagic1 vsftpd \
+        git python3-pip libpython3-dev gcc libmagic1 openssh-server \
         zlib1g-dev libfreetype6-dev libjpeg-dev openjpeg-tools \
         libtiff-dev liblcms2-dev libwebp-dev libwebpmux1 \
+#        libpoppler-cpp-dev g++ \
+        wget \
     && rm -rf /var/lib/apt/lists/*
 
 # Install python dependencies
 RUN mkdir -p /usr/src
 WORKDIR /usr/src
-RUN git clone https://github.com/danielquinn/paperless.git
+#RUN git clone https://github.com/danielquinn/paperless.git
+RUN wget https://github.com/danielquinn/paperless/archive/${VERSION}.tar.gz \
+    && tar zxvf ${VERSION}.tar.gz \
+    && ln -s paperless-${VERSION} paperless
 WORKDIR /usr/src/paperless
 RUN pip3 install -r requirements.txt --global-option=build_ext --global-option="-L/usr/lib/arm-linux-gnueabihf" --global-option="-I/usr/include/arm-linux-gnueabihf"
 

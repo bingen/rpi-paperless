@@ -6,16 +6,6 @@ mkdir -p ${PAPERLESS_CONSUMPTION_DIR}
 # Set export directory
 mkdir -p $PAPERLESS_EXPORT_DIR
 
-# set ftp user home to Consume folder
-usermod -d ${PAPERLESS_CONSUMPTION_DIR} ftp
-
-# allow to upload thru FTP
-sed -i 's/#write_enable=/write_enable=/g' /etc/vsftpd.conf
-# Chroot to home folder
-sed -i '0,/#chroot_local_user=/{s/#chroot_local_user=/chroot_local_user=/}' /etc/vsftpd.conf
-echo "pasv_min_port=21100" >> /etc/vsftpd.conf
-echo "pasv_max_port=21110" >> /etc/vsftpd.conf
-
 # set Web server password from secret
 if [ ! -z ${PAPERLESS_WEBSERVER_PWD_FILE} -a -f ${PAPERLESS_WEBSERVER_PWD_FILE} ]; then
     PAPERLESS_WEBSERVER_PWD=`cat $PAPERLESS_WEBSERVER_PWD_FILE`;
@@ -44,9 +34,12 @@ echo Create webserver user
 # create FTP user
 useradd -d ${PAPERLESS_CONSUMPTION_DIR} -p `openssl passwd -1 ${PAPERLESS_FTP_PWD}` ${PAPERLESS_FTP_USER}
 
-# start FTP server
-echo start FTP server
-service vsftpd start
+chown ${PAPERLESS_FTP_USER} ${PAPERLESS_CONSUMPTION_DIR}
+chmod 777 ${PAPERLESS_CONSUMPTION_DIR}
+
+# start OPENSSH server
+echo start OPENSSH server
+service ssh start
 
 # start web server
 echo start web server
