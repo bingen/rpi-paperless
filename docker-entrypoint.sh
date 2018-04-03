@@ -1,10 +1,7 @@
 #!/bin/bash
 
-# Set consumption directory
-mkdir -p ${PAPERLESS_CONSUMPTION_DIR}
-
 # Set export directory
-mkdir -p $PAPERLESS_EXPORT_DIR
+mkdir -p ${PAPERLESS_EXPORT_DIR}
 
 # set Web server password from secret
 if [ ! -z ${PAPERLESS_WEBSERVER_PWD_FILE} -a -f ${PAPERLESS_WEBSERVER_PWD_FILE} ]; then
@@ -16,11 +13,6 @@ if [ ! -z ${PAPERLESS_PASSPHRASE_FILE} -a -f ${PAPERLESS_PASSPHRASE_FILE} ]; the
     export PAPERLESS_PASSPHRASE=`cat $PAPERLESS_PASSPHRASE_FILE`;
 fi
 
-# set FTP user password from secret
-if [ ! -z ${PAPERLESS_FTP_PWD_FILE} -a -f ${PAPERLESS_FTP_PWD_FILE} ]; then
-    PAPERLESS_FTP_PWD=`cat $PAPERLESS_FTP_PWD_FILE`;
-fi
-
 
 # Migrate database
 echo Migrate database
@@ -30,16 +22,6 @@ echo Migrate database
 echo Create webserver user
 # https://stackoverflow.com/a/42491469/1937418
 /usr/src/paperless/src/manage.py createsuperuser2 --username ${PAPERLESS_WEBSERVER_USER} --email paperless@test.com --password ${PAPERLESS_WEBSERVER_PWD} --noinput
-
-# create FTP user
-useradd -d ${PAPERLESS_CONSUMPTION_DIR} -p `openssl passwd -1 ${PAPERLESS_FTP_PWD}` ${PAPERLESS_FTP_USER}
-
-chown ${PAPERLESS_FTP_USER} ${PAPERLESS_CONSUMPTION_DIR}
-chmod 777 ${PAPERLESS_CONSUMPTION_DIR}
-
-# start OPENSSH server
-echo start OPENSSH server
-service ssh start
 
 # start web server
 echo start web server
