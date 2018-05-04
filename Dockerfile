@@ -6,7 +6,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         sudo \
         tesseract-ocr tesseract-ocr-eng imagemagick ghostscript unpaper \
-        git python3-pip libpython3-dev gcc libmagic1 openssh-server \
+        git python3-pip libpython3-dev gcc libmagic1 \
         zlib1g-dev libfreetype6-dev libjpeg-dev openjpeg-tools \
         libtiff-dev liblcms2-dev libwebp-dev libwebpmux1 \
 #        libpoppler-cpp-dev g++ \
